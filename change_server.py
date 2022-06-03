@@ -11,13 +11,19 @@ def get_uuid_list(vss_api_instance):
 		uuid_list.append(device['Uuid'])
 		
 	return uuid_list
+	
+def success(tclv_send, tclv_type, url):
+	if tclv_send != 200:
+		print("Sending the TCLV command ID {0} to server URL {1} FAILED, please check the parameters-----".format(tclv_type, url))
+	else:
+		print("Command was successful")
 
 def device_tclv(url, key, secret, tclv_type, value):
 
 	# TCLV commands
 	tclv_type = 166
-	print("West Europe - we3.gw.getjoan.com \nEast US - eu3.gw.getjoan.com \nWest US - wu.gw.getjoan.com \nHong Kong - hongkong1.gw.getjoan.com")
-	value = input("Enter target server: ").strip()
+	print("West Europe - we3.gw.getjoan.com \nEast US - eu3.gw.getjoan.com \nWest US - wu.gw.getjoan.com \nHong Kong - hongkong1.gw.getjoan.com\n")
+	value = input("Enter the target server for change: ").strip()
 	flash_save = {'Type': 53, 'Value': ''}
 	reboot = {'Type': 91, 'Value': '1'}
 	
@@ -30,31 +36,22 @@ def device_tclv(url, key, secret, tclv_type, value):
 		# Change server TCLV
 		print("----Sending the TCLV command ID {0} to server URL {1}-----".format(tclv_type, url))
 		tclv_send = vss_api_instance.update_device_config(uuid, tclv_type, value)
-		if tclv_send != 200:
-			print("Sending the TCLV command ID {0} to server URL {1} FAILED, please check the parameters-----".format(tclv_type, url))
-		else:
-			print("Command was successful")
+		success(tclv_send, tclv_type, url)
 			
 		# Flash save TCLV
 		print("----Sending the TCLV command ID {0} to server URL {1}-----".format(flash_save['Type'], url))
 		tclv_send = vss_api_instance.update_device_config(uuid, flash_save['Type'], flash_save['Value'])
-		if tclv_send != 200:
-			print("Sending the TCLV command ID {0} to server URL {1} FAILED, please check the parameters-----".format(flash_save['Value'], url))
-		else:
-			print("Command was successful")
+		success(tclv_send, tclv_type, url)
 		
 		# Reboot TCLV
 		print("----Sending the TCLV command ID {0} to server URL {1}-----".format(reboot['Type'], url))
 		tclv_send = vss_api_instance.update_device_config(uuid, reboot['Type'], reboot['Value'])
-		if tclv_send != 200:
-			print("Sending the TCLV command ID {0} to server URL {1} FAILED, please check the parameters-----".format(reboot['Type'], url))
-		else:
-			print("Command was successful")	
+		success(tclv_send, tclv_type, url)	
 	
 def main(argv):
-	key = "dbd2226a755f0848"
-	secret = "TpwLJd3aR+0L0gs6FMhEiYgBD2FQ4ozg7/pQigH+TFg"
-	url = "http://192.168.64.118:8081/"
+	url = input("Enter the IP/URL of the server: ").strip()
+	key = input("Enter the API key: ").strip()
+	secret = input("Enter the API secret: ").strip()
 
 	try:
 		device_tclv(url, key, secret)
