@@ -18,14 +18,16 @@ def success(tclv_send, tclv_type, url):
 	else:
 		print("Command was successful")
 
-def device_tclv(url, key, secret, tclv_type, value):
+def device_tclv(url, key, secret):
 
 	# TCLV commands
 	tclv_type = 166
 	print("West Europe - we3.gw.getjoan.com \nEast US - eu3.gw.getjoan.com \nWest US - wu.gw.getjoan.com \nHong Kong - hongkong1.gw.getjoan.com\n")
-	value = input("Enter the target server for change: ").strip()
+	value = input("Enter the target server for change: ").strip() + ":11113"
 	flash_save = {'Type': 53, 'Value': ''}
-	reboot = {'Type': 91, 'Value': '1'}
+	reboot = {'Type': 91, 'Value': '0'}
+	
+	print(type(flash_save['Type']))
 	
 	# VSS declaration
 	vss_api_instance = ApiDeclarations(url, key, secret)
@@ -56,7 +58,7 @@ def main(argv):
 	try:
 		device_tclv(url, key, secret)
 	except:
-		print("Something went wrong, re-check if the URL, Api key, and Api secret are correct)
+		print("Something went wrong, re-check if the URL, Api key, and Api secret are correct")
 		
 if __name__ == '__main__':
    main(sys.argv[1:])
