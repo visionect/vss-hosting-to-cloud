@@ -17,6 +17,13 @@ def success(tclv_send, tclv_type, url):
 		print("Sending the TCLV command ID {0} to server URL {1} FAILED, please check the parameters-----".format(tclv_type, url))
 	else:
 		print("Command was successful")
+		
+def delete_device(vss_api_instance, status, uuid):
+	if status != 200:
+		print("The device could not be deleted from the server")
+	else:
+		vss_api_instance.delete_device(uuid)
+		print("Device deleted from the server!")
 
 def device_tclv(url, key, secret):
 
@@ -26,8 +33,6 @@ def device_tclv(url, key, secret):
 	value = input("Enter the target server for change: ").strip() + ":11113"
 	flash_save = {'Type': 53, 'Value': ''}
 	reboot = {'Type': 91, 'Value': '0'}
-	
-	print(type(flash_save['Type']))
 	
 	# VSS declaration
 	vss_api_instance = ApiDeclarations(url, key, secret)
@@ -39,16 +44,8 @@ def device_tclv(url, key, secret):
 		print("----Sending the TCLV command ID {0} to server URL {1}-----".format(tclv_type, url))
 		tclv_send = vss_api_instance.update_device_config(uuid, tclv_type, value)
 		success(tclv_send, tclv_type, url)
-			
-		# Flash save TCLV
-		print("----Sending the TCLV command ID {0} to server URL {1}-----".format(flash_save['Type'], url))
-		tclv_send = vss_api_instance.update_device_config(uuid, flash_save['Type'], flash_save['Value'])
-		success(tclv_send, tclv_type, url)
 		
-		# Reboot TCLV
-		print("----Sending the TCLV command ID {0} to server URL {1}-----".format(reboot['Type'], url))
-		tclv_send = vss_api_instance.update_device_config(uuid, reboot['Type'], reboot['Value'])
-		success(tclv_send, tclv_type, url)	
+		delete_device(vss_api_instance, tclv_send, uuid)	
 	
 def main(argv):
 	url = input("Enter the IP/URL of the server: ").strip()
