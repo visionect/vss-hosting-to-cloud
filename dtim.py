@@ -1,4 +1,5 @@
 from vss_python_api import ApiDeclarations
+from getpass import getpass
 import time 
 import sys, getopt
 
@@ -17,20 +18,12 @@ def success(tclv_send, tclv_type, url):
 		print("Sending the TCLV command ID {0} to server URL {1} FAILED, please check the parameters-----".format(tclv_type, url))
 	else:
 		print("Command was successful")
-		
-def delete_device(vss_api_instance, status, uuid):
-	if status != 200:
-		print("The device could not be deleted from the server")
-	else:
-		vss_api_instance.delete_device(uuid)
-		print("Device {0} deleted from the server!".format(uuid))
 
 def device_tclv(url, key, secret):
 
 	# TCLV commands
-	tclv_type = 166
-	print("West Europe - we3.gw.getjoan.com \nEast US - eu3.gw.getjoan.com \nWest US - wu.gw.getjoan.com \nHong Kong - hongkong1.gw.getjoan.com\n")
-	value = input("Enter the target server for change: ").strip() + ":11113"
+	dtim_set = 5
+	dtim_value = 300
 	flash_save = {'Type': 53, 'Value': ''}
 	reboot = {'Type': 91, 'Value': '0'}
 	
@@ -40,12 +33,10 @@ def device_tclv(url, key, secret):
 	
 	# Sending TCLV commands
 	for uuid in uuid_list:
-		# Change server TCLV
-		print("----Sending the TCLV command ID {0} to server URL {1}-----".format(tclv_type, url))
-		tclv_send = vss_api_instance.update_device_config(uuid, tclv_type, value)
-		success(tclv_send, tclv_type, url)
-		
-		delete_device(vss_api_instance, tclv_send, uuid)	
+		# Change DTIM TCLV
+		print("----Sending the TCLV command ID {0} to server URL {1}-----".format(dtim_set, url))
+		tclv_send = vss_api_instance.update_device_config(uuid, dtim_set, dtim_value)
+		success(tclv_send, dtim_set, url)
 	
 def main(argv):
 	url = input("Enter the IP/URL of the server: ").strip()
